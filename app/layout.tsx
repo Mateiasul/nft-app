@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import NavigationBar from "./components/NavigationBar";
+import NavigationBar from "../components/NavigationBar";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Providers from "./providers";
