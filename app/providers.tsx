@@ -1,45 +1,43 @@
 "use client";
-import { NextUIProvider } from "@nextui-org/react";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+
+import * as React from "react";
 import {
-  ConnectionProvider,
-  WalletProvider,
-} from "@solana/wallet-adapter-react";
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { clusterApiUrl } from "@solana/web3.js";
-import React, { useMemo } from "react";
+  RainbowKitProvider,
+  getDefaultConfig,
+  Chain,
+  darkTheme,
+} from "@rainbow-me/rainbowkit";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WagmiProvider } from "wagmi";
+import "@rainbow-me/rainbowkit/styles.css";
+import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-// Use require instead of import since order matters
-require("@solana/wallet-adapter-react-ui/styles.css");
+const blastChain: Chain = {
+  id: 168587773,
+  name: "Blast Sepolia",
+  nativeCurrency: {
+    name: "Ether",
+    symbol: "ETH",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://sepolia.blast.io"],
+    },
+  },
+};
 
-// Default styles that can be overridden by your app
-export default function Providers({ children }: { children: React.ReactNode }) {
-  // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
-  const network = WalletAdapterNetwork.Devnet;
+const config = getDefaultConfig({
+  appName: "Zarr-NFT",
+  projectId: "9a6db3f7bd314e4c63edb5ce12cdb329",
+  chains: [blastChain],
+  ssr: true,
+});
 
-  // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+const queryClient = new QueryClient();
 
-  const wallets = useMemo(
-    () => [
-      /**
-       * Wallets that implement either of these standards will be available automatically.
-       *
-       *   - Solana Mobile Stack Mobile Wallet Adapter Protocol
-       *     (https://github.com/solana-mobile/mobile-wallet-adapter)
-       *   - Solana Wallet Standard
-       *     (https://github.com/solana-labs/wallet-standard)
-       *
-       * If you wish to support a wallet that supports neither of those standards,
-       * instantiate its legacy wallet adapter here. Common legacy adapters can be found
-       * in the npm package `@solana/wallet-adapter-wallets`.
-       */
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [network]
-  );
-
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NextUIProvider>
       <NextThemesProvider
@@ -47,12 +45,25 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         defaultTheme="dark"
         themes={["light", "dark", "modernnp"]}
       >
-        <ConnectionProvider endpoint={endpoint}>
-          <WalletProvider wallets={wallets} autoConnect>
-            <WalletModalProvider>{children}</WalletModalProvider>
-          </WalletProvider>
-        </ConnectionProvider>
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitProvider
+              theme={darkTheme({
+                accentColor: "#FCFC03",
+                accentColorForeground: "black",
+                borderRadius: "medium",
+                fontStack: "system",
+                overlayBlur: "small",
+              })}
+              modalSize="compact"
+            >
+              {children}
+            </RainbowKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
       </NextThemesProvider>
     </NextUIProvider>
   );
 }
+
+export default Providers;

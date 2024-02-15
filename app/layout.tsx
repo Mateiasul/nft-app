@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import NavigationBar from "../components/NavigationBar";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Providers from "./providers";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next Appp",
@@ -19,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <Providers>
           <NavigationBar></NavigationBar>
           {children}

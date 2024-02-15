@@ -9,6 +9,22 @@ const config: Config = {
   ],
   theme: {},
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [
+    nextui({
+      themes: {
+        dark: {
+          colors: {
+            background: "#11140c", // or DEFAULT
+            foreground: "#9BA885", // or 50 to 900 DEFAULT
+            primary: {
+              //... 50 to 900
+              foreground: "#FFFFFF",
+              DEFAULT: "#006FEE",
+            },
+          },
+        },
+      },
+    }),
+  ],
 };
 export default config;
